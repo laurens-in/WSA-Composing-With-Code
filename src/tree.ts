@@ -1,51 +1,34 @@
-type TreeNode<T> =
-  | { kind: "node"; left: Tree<T>; right?: Tree<T>; data: T }
-  | { kind: "node"; left?: Tree<T>; right: Tree<T>; data: T };
+// type TreeNode<T> =
+//   | { kind: "node"; left: Tree<T>; right?: Tree<T>; data: T }
+//   | { kind: "node"; left?: Tree<T>; right: Tree<T>; data: T };
 
-type TreeLeaf<T> = {
-  kind: "leaf";
+// type TreeLeaf<T> = {
+//   kind: "leaf";
+//   data: T;
+// };
+
+// export type Tree<T> = TreeNode<T> | TreeLeaf<T>;
+
+export type Tree<T> = {
   data: T;
+  left?: Tree<T>;
+  right?: Tree<T>;
 };
 
-export type Tree<T> = TreeNode<T> | TreeLeaf<T>;
+// export const isNode = <T>(t: Tree<T>): t is TreeNode<T> => {
+//   return t.kind === "node";
+// };
 
-export const isNode = <T>(t: Tree<T>): t is TreeNode<T> => {
-  return t.kind === "node";
+// export const isLeaf = <T>(t: Tree<T>): t is TreeLeaf<T> => {
+//   return t.kind === "leaf";
+// };
+
+export const isNode = <T>(t: Tree<T>) => {
+  return t.left !== undefined || t.right !== undefined;
 };
 
-export const isLeaf = <T>(t: Tree<T>): t is TreeLeaf<T> => {
-  return t.kind === "leaf";
-};
-
-const node: TreeNode<number> = {
-  kind: "node",
-  data: 0,
-  left: { kind: "leaf", data: 0 },
-  right: { kind: "leaf", data: 0 },
-};
-
-const tree: Tree<number> = {
-  kind: "node",
-  data: 0,
-  left: {
-    kind: "node",
-    data: 1,
-    left: {
-      kind: "node",
-      data: 2,
-      left: { kind: "leaf", data: 3 },
-      right: { kind: "leaf", data: 4 },
-    },
-    right: {
-      kind: "node",
-      data: 5,
-      right: {
-        kind: "leaf",
-        data: 6,
-      },
-    },
-  },
-  right: { kind: "node", data: 7, right: { kind: "leaf", data: 8 } },
+export const isLeaf = <T>(t: Tree<T>) => {
+  return t.left === undefined && t.right === undefined;
 };
 
 export const findPaths = <T>(node: Tree<T>, path: T[] = []): T[][] => {
@@ -78,7 +61,7 @@ function getBorder<T>(root: Tree<T>): T[] {
 
 function getLeftBoundary<T>(node: Tree<T> | undefined): T[] {
   if (!node) return [];
-  if (node.kind === "leaf") return [];
+  if (isLeaf(node)) return [];
 
   const leftBoundary = [node.data];
   if (node.left) {
@@ -92,7 +75,7 @@ function getLeftBoundary<T>(node: Tree<T> | undefined): T[] {
 
 function getRightBoundary<T>(node: Tree<T> | undefined): T[] {
   if (!node) return [];
-  if (node.kind === "leaf") return [];
+  if (isLeaf(node)) return [];
 
   const rightBoundary = [node.data];
   if (node.right) {
@@ -106,7 +89,7 @@ function getRightBoundary<T>(node: Tree<T> | undefined): T[] {
 
 function getLeaves<T>(node: Tree<T> | undefined): T[] {
   if (!node) return [];
-  if (node.kind === "leaf") return [node.data];
+  if (isLeaf(node)) return [node.data];
 
   return [...getLeaves(node.left), ...getLeaves(node.right)];
 }
