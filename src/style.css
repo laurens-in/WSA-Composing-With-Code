@@ -1,3 +1,10 @@
+@font-face {
+  font-family: "FT88";
+  src: url("/FT88-Regular.woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
 html,
 body,
 #app {
@@ -12,8 +19,26 @@ svg g {
 }
 
 svg g {
-  color: black;
+  color: rgb(36, 32, 32);
 }
 svg g:hover {
-  color: red;
+  color: rgb(73, 73, 197);
+}
+
+svg circle,
+svg line {
+  stroke: rgb(209, 139, 10);
+}
+
+svg text {
+  font-family: "FT88";
+}
+
+button {
+  background-color: rgb(209, 139, 10);
+  border: none;
+  border-radius: 7px;
+  width: 35px;
+  height: 35px;
+  color: rgb(36, 32, 32);
 }

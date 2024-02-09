@@ -1,5 +1,5 @@
 // import { visualize } from "./cytoscape";
-import { drawTree } from "./draw2";
+import { renderTree } from "./draw2";
 import "./style.css";
 import { Tree } from "./tree";
 
@@ -24,8 +24,9 @@ const tree: Tree<number> = {
       kind: "node",
       data: 2,
       left: {
-        kind: "leaf",
+        kind: "node",
         data: 3,
+        right: { kind: "leaf", data: 10 },
       },
       right: { kind: "leaf", data: 4 },
     },
@@ -52,4 +53,4 @@ const tree: Tree<number> = {
   },
 };
 
-if (treeDiv) drawTree(tree, treeDiv);
+if (treeDiv) renderTree(tree, treeDiv);

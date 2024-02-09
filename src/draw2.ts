@@ -1,33 +1,59 @@
 import { Tree, findPaths, isLeaf, isNode } from "./tree";
 
-export const drawTree = <T>(t: Tree<T>, container: HTMLDivElement) => {
+export const renderTree = <T>(t: Tree<T>, container: HTMLDivElement) => {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+  const obs = new ResizeObserver(() => {
+    drawTree(t, svg, container);
+  });
+  drawTree(t, svg, container);
+  obs.observe(container);
+
+  const button = getDownload(svg, "tree.svg");
+
+  container.append(button);
+};
+
+const getDownload = (svg: SVGSVGElement, name: string) => {
+  const svgData = new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.innerHTML = `<button style="position: absolute;"><svg xmlns="http://www.w3.org/2000/svg" width="80%" height="80%" fill="currentColor" class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
+                      <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293z"/>
+                      <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                    </svg></button>`;
+  link.href = url;
+  link.download = name;
+  return link;
+};
+
+const drawTree = <T>(
+  t: Tree<T>,
+  svg: SVGSVGElement,
+  container: HTMLDivElement
+) => {
+  svg.innerHTML = "";
   const ratio = container.clientHeight / container.clientWidth;
+
+  const width = 100;
+  const height = 100 * ratio;
+
   svg.setAttribute("viewBox", `0 0 120 ${120 * ratio}`);
   svg.setAttribute("preserveAspectRatio", "none");
-  console.log(`0 0 120 ${120 * ratio}`);
 
-  const size =
-    container.clientWidth > container.clientHeight
-      ? container.clientHeight
-      : container.clientWidth;
-
-  // svg.width.baseVal.valueAsString = `${size}px`;
-  // svg.height.baseVal.valueAsString = `${size}px`;
   svg.width.baseVal.valueAsString = `${container.clientWidth}px`;
   svg.height.baseVal.valueAsString = `${container.clientHeight}px`;
-  svg.style.backgroundColor = "#EBB3E2";
 
   container.append(svg);
 
-  const width = 100;
-
-  const padding = 10;
+  const paddingH = 10;
+  const paddingV = height * 0.1;
   const depth = findPaths(t).reduce((p, c) => (p > c.length ? p : c.length), 0);
   const breadth = Math.pow(2, depth - 1);
 
   const spaces = breadth * 2 - 1;
-  const radius = (100 / spaces) * 0.8;
+  const radius = Math.min((100 / spaces) * 0.8, height * 0.1);
   const indents = [
     0,
     ...[...Array(depth - 1).keys()].map((v) => Math.pow(2, v)).reverse(),
@@ -36,12 +62,11 @@ export const drawTree = <T>(t: Tree<T>, container: HTMLDivElement) => {
   recursiveDraw(
     t,
     svg,
-    { x: width / 2 + padding, y: radius + (padding * ratio) / 2 },
+    { x: width / 2 + paddingH, y: paddingV },
     radius,
-    padding,
     {
       h: 100 / spaces,
-      v: ((100 - 2 * radius) * ratio) / (depth - 1),
+      v: height / (depth - 1),
     },
     indents,
     0
@@ -53,7 +78,6 @@ const recursiveDraw = <T>(
   svg: SVGSVGElement,
   position: { x: number; y: number },
   radius: number,
-  padding: number,
   space: { h: number; v: number },
   indents: number[],
   depth = 0
@@ -64,13 +88,12 @@ const recursiveDraw = <T>(
         x: position.x - indents[depth + 1] * space.h,
         y: position.y + space.v,
       };
-      drawLine(position, nextLeftPosition, indents.length, svg);
+      drawLine(position, nextLeftPosition, radius, svg);
       recursiveDraw(
         node.left,
         svg,
         nextLeftPosition,
         radius,
-        padding,
         space,
         indents,
         depth + 1
@@ -81,13 +104,12 @@ const recursiveDraw = <T>(
         x: position.x + indents[depth + 1] * space.h,
         y: position.y + space.v,
       };
-      drawLine(position, nextRightPosition, indents.length, svg);
+      drawLine(position, nextRightPosition, radius, svg);
       recursiveDraw(
         node.right,
         svg,
         nextRightPosition,
         radius,
-        padding,
         space,
         indents,
         depth + 1
@@ -102,14 +124,6 @@ const recursiveDraw = <T>(
     (node.data as number).toString(),
     svg
   );
-  // drawText(
-  //   position.x,
-  //   position.y,
-  //   radius,
-  //   (node.data as number).toString(),
-  //   svg
-  // );
-
   if (isLeaf(node)) return;
 };
 
@@ -127,7 +141,8 @@ const drawCircle = (
   );
   circle.cx.baseVal.value = x;
   circle.cy.baseVal.value = y;
-  circle.r.baseVal.value = r;
+  circle.r.baseVal.value = r * 0.9;
+  circle.style.strokeWidth = `${r * 0.2}`;
   circle.style.fill = "currentColor";
 
   group.append(circle);
@@ -139,7 +154,7 @@ const drawCircle = (
 const drawLine = (
   origin: { x: number; y: number },
   target: { x: number; y: number },
-  depth: number,
+  radius: number,
   svg: SVGSVGElement
 ) => {
   const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -147,15 +162,14 @@ const drawLine = (
   line.y1.baseVal.value = origin.y;
   line.x2.baseVal.value = target.x;
   line.y2.baseVal.value = target.y;
-  line.style.stroke = "gray";
-  line.style.strokeWidth = `${2 / depth}px`;
+  line.style.strokeWidth = `${radius * 0.2}`;
   svg.append(line);
 };
 
 const getText = (x: number, y: number, size: number, text: string) => {
   const textP = document.createElementNS("http://www.w3.org/2000/svg", "text");
   textP.setAttribute("x", x.toString());
-  textP.setAttribute("y", (y + size * 0.3).toString());
+  textP.setAttribute("y", (y + size * 0.35).toString());
   textP.setAttribute("alignment-baselin", "middle");
   textP.setAttribute("text-anchor", "middle");
   textP.textContent = text;
@@ -163,6 +177,5 @@ const getText = (x: number, y: number, size: number, text: string) => {
   textP.style.fill = "white";
   textP.style.fontSize = `${size}px`;
   textP.style.lineHeight = "1";
-  textP.style.fontFamily = "monospace";
   return textP;
 };
