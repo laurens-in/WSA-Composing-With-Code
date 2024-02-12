@@ -14,7 +14,7 @@ Laurens Inauen
 	3. What are data structures?
 	4. What is Typescript?
 	5. What could we mean by "composing with code"?
-2. Composing with code
+2. Coding
 
 ---
 
@@ -82,15 +82,196 @@ If we think of musical events as data, there are already many such formalized st
 
 ---
 
+what kind of _data structures_ do you know?
+
+---
+
+### Data Structures
 
 ![data structures](https://miro.medium.com/v2/resize:fit:851/1*ZIGq3Xit78261gDW-3bheQ.png)
 
 
 ---
 
-### Data Structures: Stack vs. Queue
+### Data Structures
 
+![](https://miro.medium.com/v2/resize:fit:1400/1*zKnDkJpL-4GQ36kzrDiODQ.png)
 
+non-primitive data structures are often linked with some behavior - called _algorithms_
+
+---
+
+### Data Structures: Example Stack
+
+```javascript
+function Stack() {
+  this.items = [];
+}
+
+Stack.prototype.push = function(element) {
+  this.items.push(element); 
+};
+
+Stack.prototype.pop = function() {
+  if (this.items.length === 0) {
+    return null;
+  }
+  return this.items.pop();
+};
+```
+
+---
+
+### Data Structures: Example Queue
+
+```javascript
+function Queue() {
+  this.items = [];
+}
+
+Queue.prototype.enqueue = function(element) {
+  this.items.push(element);
+};
+
+Queue.prototype.dequeue = function() {
+  if (this.items.length === 0) {
+    return null;
+  }
+  return this.items.shift();
+};
+```
+
+---
+
+### Data Structures: Binary Tree
+
+![](./assets/binary_tree.png)
+
+---
+
+### Data Structures: Binary Tree
+
+This is what we build today, but...
+
+---
+
+How can we formalize this structure?
+
+---
+
+### Data Types
+
+Normally we formalize data (structures) using _data types_.
+
+---
+### Data Types: The Problem
+
+Javascript is a dynamically and weakly typed language.
+
+```js
+// dynamic typing
+let a = "some string";
+a = 10;
+
+// weak typing
+let a = "some string";
+console.log(a + 5) // output: "some string5"
+```
 
 
 ---
+
+### Data Types: The Problem
+
+This makes it incredibly difficult to reason about a "composition".
+
+---
+
+### Data Types: Example
+
+```js
+// some variable exists called note
+console.log(note)
+// output: "A"
+```
+
+- What do we know about this variable before we print it?
+- What do we know about this variable after we print it?
+- What do we know about the concept of "note" within this program?
+- What if the variable was called _value_?
+
+---
+
+### Data Types: Example
+
+
+```js
+// some variable exists called note
+console.log(note)
+// output:
+//{
+//  pitch: 12,
+//  velocity: 30
+//}
+```
+
+- What do we know about this variable before we print it?
+- What do we know about this variable after we print it?
+- What do we know about the concept of "note" within this program?
+
+---
+
+### Data Types: Example
+
+consider the following implementation:
+
+```js
+const makeNote = (pitch, velocity, waveform) => {
+  if (waveform) {
+     return { pitch, velocity, waveform };
+  }
+  return { pitch, velocity };
+};
+
+// any of this is valid
+const note1 = makeNote(100, 20);
+const note2 = makeNote(100, 20, "square");
+const note3 = makeNote(100, 20, 3);
+```
+
+---
+
+### Data Types: The Problem
+
+We know nothing at all!
+
+---
+
+### Data Types: The Problem
+
+Now you can say:
+
+... I know my own program\
+... I can just go check\
+... I can implement runtime checks\
+... something else
+
+
+---
+
+### Data Types: The Problem
+
+This is true, but it leads to a lot of additional complexity in your brain.
+
+We could also try to write Xenakis in traditional notation.
+
+---
+
+### Data Types: The Solution
+
+Typescript
+
+---
+
+
+

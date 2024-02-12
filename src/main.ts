@@ -1,54 +1,54 @@
 // import { visualize } from "./cytoscape";
-import { renderTree } from "./draw";
-import { nodeCallback } from "./pubsub";
+import { renderTree } from "./utils/draw";
+import { nodeCallback } from "./utils/pubsub";
 import "./style.css";
-import { createLooper, playSequence } from "./synth";
+import { createLooper, playSequence } from "./utils/synth";
 import { Tree, balanceTree, findPaths, insertNode } from "./tree";
 
 const app = document.querySelector<HTMLDivElement>("#app");
 const treeDiv = document.querySelector<HTMLDivElement>("#tree");
 
-// const tree: Tree<number> = {
-//   data: 60,
-//   left: {
-//     data: 63,
-//     left: {
-//       data: 62,
-//       left: {
-//         data: 58,
-//         right: { data: 70 },
-//       },
-//       right: { data: 56 },
-//     },
-//     right: {
-//       data: 67,
-//       left: {
-//         data: 72,
-//       },
-//       right: {
-//         data: 61,
-//       },
-//     },
-//   },
-//   right: {
-//     data: 67,
-//     right: {
-//       data: 59,
-//     },
-//   },
-// };
+let tree: Tree<number> = {
+  data: 60,
+  left: {
+    data: 63,
+    left: {
+      data: 62,
+      left: {
+        data: 58,
+        right: { data: 70 },
+      },
+      right: { data: 56 },
+    },
+    right: {
+      data: 69,
+      left: {
+        data: 72,
+      },
+      right: {
+        data: 61,
+      },
+    },
+  },
+  right: {
+    data: 67,
+    right: {
+      data: 59,
+    },
+  },
+};
 
-let tree: Tree<number> = { data: 60 };
+// let tree: Tree<number> = { data: 60 };
 
-tree = insertNode(tree, 51);
-tree = insertNode(tree, 63);
-tree = insertNode(tree, 48);
-tree = insertNode(tree, 47);
-tree = insertNode(tree, 53);
-tree = insertNode(tree, 54);
-tree = insertNode(tree, 55);
-tree = insertNode(tree, 52);
-tree = balanceTree(tree);
+// tree = insertNode(tree, 51);
+// tree = insertNode(tree, 63);
+// tree = insertNode(tree, 48);
+// tree = insertNode(tree, 47);
+// tree = insertNode(tree, 53);
+// tree = insertNode(tree, 54);
+// tree = insertNode(tree, 55);
+// tree = insertNode(tree, 52);
+// tree = balanceTree(tree);
 
 if (treeDiv) renderTree(tree, treeDiv, nodeCallback);
 

@@ -1,5 +1,5 @@
 import { eventBus } from "./pubsub";
-import { midiToFreq } from "./utils";
+import { midiToFreq } from "./conversions";
 
 const ctx = new AudioContext();
 
@@ -45,22 +45,6 @@ export const playSequence = (
   }, (speed - duration) * 1000);
 };
 
-// export const playSequenceAsync = (
-//   ns: number[],
-//   duration = 0.3,
-//   speed = 1,
-//   count = 0
-// ): Promise<boolean> => {
-//   return new Promise((resolve) => {
-//     if (count === ns.length) resolve(true);
-//     playNote(ns[count], duration);
-//     eventBus.emit("played", ns[count].toString()); // just to see which note is playing
-//     setTimeout(() => {
-//       playSequenceAsync(ns, duration, speed, count + 1);
-//     }, (speed - duration) * 1000);
-//   });
-// };
-
 export const playSequenceAsync = (
   ns: number[],
   duration = 0.3,
@@ -70,7 +54,7 @@ export const playSequenceAsync = (
   return new Promise<void>((resolve) => {
     const playNextNote = (index: number) => {
       if (index === ns.length) {
-        resolve(); // Resolve the promise when the sequence is finished
+        resolve();
         return;
       }
       playNote(ns[index], duration);
