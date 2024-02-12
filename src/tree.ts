@@ -1,27 +1,8 @@
-// type TreeNode<T> =
-//   | { kind: "node"; left: Tree<T>; right?: Tree<T>; data: T }
-//   | { kind: "node"; left?: Tree<T>; right: Tree<T>; data: T };
-
-// type TreeLeaf<T> = {
-//   kind: "leaf";
-//   data: T;
-// };
-
-// export type Tree<T> = TreeNode<T> | TreeLeaf<T>;
-
 export type Tree<T> = {
   data: T;
   left?: Tree<T>;
   right?: Tree<T>;
 };
-
-// export const isNode = <T>(t: Tree<T>): t is TreeNode<T> => {
-//   return t.kind === "node";
-// };
-
-// export const isLeaf = <T>(t: Tree<T>): t is TreeLeaf<T> => {
-//   return t.kind === "leaf";
-// };
 
 export const isNode = <T>(t: Tree<T>) => {
   return t.left !== undefined || t.right !== undefined;
@@ -30,6 +11,70 @@ export const isNode = <T>(t: Tree<T>) => {
 export const isLeaf = <T>(t: Tree<T>) => {
   return t.left === undefined && t.right === undefined;
 };
+
+export const insertNode = <T>(root: Tree<T> | undefined, data: T): Tree<T> => {
+  if (!root) {
+    return { data, left: undefined, right: undefined };
+  }
+
+  if (data < root.data) {
+    root.left = insertNode(root.left, data);
+  } else if (data > root.data) {
+    root.right = insertNode(root.right, data);
+  }
+
+  return root;
+};
+
+export function balanceTree<T>(root: Tree<T>): Tree<T> {
+  function height(node: Tree<T> | undefined): number {
+    if (!node) return 0;
+    return 1 + Math.max(height(node.left), height(node.right));
+  }
+
+  function balanceFactor(node: Tree<T> | undefined): number {
+    if (!node) return 0;
+    return height(node.left) - height(node.right);
+  }
+
+  function rotateRight(y: Tree<T>): Tree<T> {
+    const x = y.left!;
+    const temp = x.right;
+    x.right = y;
+    y.left = temp;
+    return x;
+  }
+
+  function rotateLeft(x: Tree<T>): Tree<T> {
+    const y = x.right!;
+    const temp = y.left;
+    y.left = x;
+    x.right = temp;
+    return y;
+  }
+
+  function balance(node: Tree<T>): Tree<T> {
+    const factor = balanceFactor(node);
+
+    // Left Heavy
+    if (factor > 1) {
+      if (balanceFactor(node.left) < 0) {
+        node.left = rotateLeft(node.left!);
+      }
+      return rotateRight(node);
+    }
+    // Right Heavy
+    if (factor < -1) {
+      if (balanceFactor(node.right) > 0) {
+        node.right = rotateRight(node.right!);
+      }
+      return rotateLeft(node);
+    }
+    return node;
+  }
+
+  return balance(root);
+}
 
 export const findPaths = <T>(node: Tree<T>, path: T[] = []): T[][] => {
   if (!node) return [];
@@ -49,6 +94,24 @@ export const findPaths = <T>(node: Tree<T>, path: T[] = []): T[][] => {
   }
 
   return [];
+};
+
+type IdTree<T> = Tree<T> & { id: string };
+
+const idTree = <T>(tree: Tree<T>, pos = ""): IdTree<T> => {
+  if (isLeaf(tree)) {
+    return { ...tree, id: pos };
+  }
+
+  if (isNode(tree)) {
+    const leftPaths = tree.left
+      ? idTree(tree.left, pos + "L")
+      : { id: pos, data: tree.data };
+    const rightPaths = tree.right
+      ? idTree(tree.right, pos + "R")
+      : { id: pos, data: tree.data };
+    return { ...leftPaths, ...rightPaths };
+  }
 };
 
 function getBorder<T>(root: Tree<T>): T[] {
@@ -112,7 +175,7 @@ function treeToUndirectedGraph<T>(root: Tree<T>): UndirectedGraph<T> {
       addEdge(parent, node.data); // Edge from parent to child
       addEdge(node.data, parent); // Edge from child to parent (undirected)
     }
-    if (node.kind === "node") {
+    if (isNode(node)) {
       dfs(node.left, node.data);
       dfs(node.right, node.data);
     }

@@ -1,6 +1,6 @@
 @font-face {
-  font-family: "FT88";
-  src: url("/FT88-Regular.woff");
+  font-family: "Monogram";
+  src: url("/monogram.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
@@ -22,7 +22,12 @@ svg g {
   color: rgb(36, 32, 32);
 }
 svg g:hover {
-  color: rgb(73, 73, 197);
+  /* color: rgb(73, 73, 197); */
+  color: rgb(209, 139, 10);
+}
+
+.playing {
+  color: lightblue !important;
 }
 
 svg circle,
@@ -31,14 +36,20 @@ svg line {
 }
 
 svg text {
-  font-family: "FT88";
+  font-family: "Monogram";
+}
+
+#tree {
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
 button {
   background-color: rgb(209, 139, 10);
   border: none;
   border-radius: 7px;
-  width: 35px;
+  width: fit-content;
   height: 35px;
   color: rgb(36, 32, 32);
+  margin-right: 4px;
 }

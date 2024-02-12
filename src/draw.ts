@@ -1,12 +1,17 @@
+import { playNote } from "./synth";
 import { Tree, findPaths, isLeaf, isNode } from "./tree";
 
-export const renderTree = <T>(t: Tree<T>, container: HTMLDivElement) => {
+export const renderTree = <T>(
+  t: Tree<T>,
+  container: HTMLDivElement,
+  nodeCallback: (nodeId: string, g: SVGElement) => void
+) => {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
   const obs = new ResizeObserver(() => {
-    drawTree(t, svg, container);
+    drawTree(t, svg, container, nodeCallback);
   });
-  drawTree(t, svg, container);
+  drawTree(t, svg, container, nodeCallback);
   obs.observe(container);
 
   const button = getDownload(svg, "tree.svg");
@@ -31,7 +36,8 @@ const getDownload = (svg: SVGSVGElement, name: string) => {
 const drawTree = <T>(
   t: Tree<T>,
   svg: SVGSVGElement,
-  container: HTMLDivElement
+  container: HTMLDivElement,
+  nodeCallback: (nodeId: string, g: SVGElement) => void
 ) => {
   svg.innerHTML = "";
   const ratio = container.clientHeight / container.clientWidth;
@@ -69,6 +75,7 @@ const drawTree = <T>(
       v: height / (depth - 1),
     },
     indents,
+    nodeCallback,
     0
   );
 };
@@ -80,6 +87,7 @@ const recursiveDraw = <T>(
   radius: number,
   space: { h: number; v: number },
   indents: number[],
+  nodeCallback: (nodeId: string, g: SVGElement) => void,
   depth = 0
 ) => {
   if (isNode(node)) {
@@ -96,6 +104,7 @@ const recursiveDraw = <T>(
         radius,
         space,
         indents,
+        nodeCallback,
         depth + 1
       );
     }
@@ -112,29 +121,41 @@ const recursiveDraw = <T>(
         radius,
         space,
         indents,
+        nodeCallback,
         depth + 1
       );
     }
   }
 
-  drawCircle(
+  const circle = createCircle(
     position.x,
     position.y,
     radius,
     (node.data as number).toString(),
-    svg
+    node.data as number,
+    nodeCallback
   );
+
+  svg.append(circle);
+
   if (isLeaf(node)) return;
 };
 
-const drawCircle = (
+const createCircle = (
   x: number,
   y: number,
   r: number,
   label: string,
-  svg: SVGSVGElement
+  data: number,
+  nodeCallback: (nodeId: string, g: SVGElement) => void
 ) => {
   const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  group.addEventListener("click", () => {
+    playNote(data);
+  });
+
+  nodeCallback(label, group);
+
   const circle = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "circle"
@@ -146,9 +167,9 @@ const drawCircle = (
   circle.style.fill = "currentColor";
 
   group.append(circle);
-  const text = getText(x, y, r, label);
+  const text = getText(x, y, r * 1.5, label);
   group.append(text);
-  svg.append(group);
+  return group;
 };
 
 const drawLine = (
@@ -168,8 +189,8 @@ const drawLine = (
 
 const getText = (x: number, y: number, size: number, text: string) => {
   const textP = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  textP.setAttribute("x", x.toString());
-  textP.setAttribute("y", (y + size * 0.35).toString());
+  textP.setAttribute("x", (x + 0.15).toString());
+  textP.setAttribute("y", (y + size * 0.225).toString());
   textP.setAttribute("alignment-baselin", "middle");
   textP.setAttribute("text-anchor", "middle");
   textP.textContent = text;
