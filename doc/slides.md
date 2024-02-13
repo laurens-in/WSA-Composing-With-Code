@@ -12,7 +12,7 @@ Laurens Inauen
 1. Introduction with slides
 	1. What is composition?
 	2. What are data structures?
-	3. What are data types
+	3. What are data types?
 2. Coding
 
 ---
@@ -231,7 +231,6 @@ const makeNote = (pitch, velocity, waveform) => {
   }
   return { pitch, velocity };
 };
-
 // any of this is valid
 const note1 = makeNote(100, 20);
 const note2 = makeNote(100, 20, "square");
@@ -310,6 +309,12 @@ They can be complicated if they have to be kept updated, however we only initial
 ---
 
 Let's try it out!
+
+---
+
+### Data Structure: Undirected Graph
+
+![](https://www.researchgate.net/profile/Hakan-Terelius/publication/265428782/figure/fig3/AS:669498856194058@1536632374537/An-undirected-graph-with-7-nodes-and-7-edges.png)
 
 ---
 
