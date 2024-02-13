@@ -37,7 +37,7 @@ let tree: Tree = {
   },
 };
 
-// create a binary search tree from an array!
+// 1.5 create a binary search tree from an array!
 tree = treeFromArray([
   60, 62, 63, 65, 67, 68, 70, 72, 74, 75, 77, 79, 80, 82, 84,
 ]);
@@ -68,7 +68,7 @@ paths.forEach((p, i) => {
   controls?.append(button);
 });
 
-// 1.4 create a button to loop through the top-down paths
+// 1.6 create a button to loop through the top-down paths
 const [startLoop1, stopLoop1] = createLooper(paths);
 const toggle1 = document.createElement("button");
 let toggle1State = false;
@@ -87,7 +87,7 @@ toggle1.innerHTML = "Turn On";
 
 controls?.append(toggle1);
 
-// 1.5 create a button to loop through the bottom-up paths
+// 1.7 create a button to loop through the bottom-up paths
 const [startLoop2, stopLoop2] = createLooper(paths.map((p) => p.toReversed()));
 const toggle2 = document.createElement("button");
 let toggle2State = false;
@@ -106,7 +106,7 @@ toggle2.innerHTML = "Turn On";
 
 controls?.append(toggle2);
 
-// 1.6 create a button to loop through all paths
+// 1.8 create a button to loop through all paths
 const allPaths = [...paths, ...paths.map((p) => p.toReversed())];
 
 const [startLoop3, stopLoop3] = createLooper(allPaths);

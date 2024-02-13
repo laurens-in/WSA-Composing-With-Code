@@ -273,5 +273,33 @@ Typescript
 
 ---
 
+### Data Types: The Solution
 
+Typescript let's us define _data types_ and thus describe _data structures_, which makes it easier to reason about our code or composition.
 
+---
+
+### Data Types: The Solution
+
+let's try it out
+
+---
+
+- `git clone https://github.com/laurens-in/WSA-Composing-With-Code.git`
+- `git clone git@github.com:laurens-in/WSA-Composing-With-Code.git`
+
+---
+### Data Structure: Binary Search Tree
+
+A binary search tree has a few characteristics:
+
+- it is balanced (no leaves are further than 1 level apart)
+- from any parent:
+	- its left node is lesser than itself
+	- its right node is greater than itself
+
+---
+
+### Data Structure: Binary Search Tree
+
+They can be complicated if they have to be kept updated, however we only initialize them once.
