@@ -2,7 +2,7 @@ import { playNote } from "./synth";
 import { Tree, findPaths, isLeaf, isNode } from "../tree";
 import { nodeCallback } from "./pubsub";
 
-export const renderTree = <T>(t: Tree<T>, container: HTMLDivElement) => {
+export const renderTree = (t: Tree, container: HTMLDivElement) => {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
   const obs = new ResizeObserver(() => {
@@ -12,8 +12,8 @@ export const renderTree = <T>(t: Tree<T>, container: HTMLDivElement) => {
   obs.observe(container);
 };
 
-const drawTree = <T>(
-  t: Tree<T>,
+const drawTree = (
+  t: Tree,
   svg: SVGSVGElement,
   container: HTMLDivElement,
   nodeCallback: (nodeId: string, g: SVGElement) => void
@@ -59,8 +59,8 @@ const drawTree = <T>(
   );
 };
 
-const recursiveDraw = <T>(
-  node: Tree<T>,
+const recursiveDraw = (
+  node: Tree,
   svg: SVGSVGElement,
   position: { x: number; y: number },
   radius: number,
@@ -110,8 +110,8 @@ const recursiveDraw = <T>(
     position.x,
     position.y,
     radius,
-    (node.data as number).toString(),
-    node.data as number,
+    node.data.toString(),
+    node.data,
     nodeCallback
   );
 

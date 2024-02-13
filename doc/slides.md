@@ -11,9 +11,8 @@ Laurens Inauen
 ### Plan
 1. Introduction with slides
 	1. What is composition?
-	3. What are data structures?
-	4. What is Typescript?
-	5. What could we mean by "composing with code"?
+	2. What are data structures?
+	3. What are data types
 2. Coding
 
 ---
@@ -279,9 +278,7 @@ Typescript let's us define _data types_ and thus describe _data structures_, whi
 
 ---
 
-### Data Types: The Solution
-
-let's try it out
+Let's try it out
 
 ---
 
@@ -302,4 +299,14 @@ A binary search tree has a few characteristics:
 
 ### Data Structure: Binary Search Tree
 
-They can be complicated if they have to be kept updated, however we only initialize them once.
+They can be complicated if they have to be kept updated, however we only initialize them once, so we can use a little trick.
+
+---
+
+Let's try it out!
+
+---
+
+### Conclusion
+
+- This was just an experiment, to get you thinking

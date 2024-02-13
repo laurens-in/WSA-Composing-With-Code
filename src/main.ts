@@ -3,8 +3,11 @@ import { renderTree } from "./utils/draw";
 import { createLooper, playSequence } from "./utils/synth";
 import { Tree, findPaths, treeFromArray } from "./tree";
 
-const controls = document.querySelector<HTMLDivElement>("#controls");
-const treeDiv = document.querySelector<HTMLDivElement>("#tree");
+const $tree = document.querySelector<HTMLDivElement>("#tree");
+const $controls = document.querySelector<HTMLDivElement>("#controls");
+
+// 0.8 play around with types, show them some stuff
+// 0.9 show them what happens when you compile
 
 // 1.0 create any tree as a literal
 let tree: Tree = {
@@ -38,12 +41,10 @@ let tree: Tree = {
 };
 
 // 1.5 create a binary search tree from an array!
-tree = treeFromArray([
-  60, 62, 63, 65, 67, 68, 70, 72, 74, 75, 77, 79, 80, 82, 84,
-]);
-
+tree = treeFromArray([60, 62, 63, 65, 67, 68, 70, 72, 74]);
+console.log(tree);
 // 1.1 render the tree
-if (treeDiv) renderTree(tree, treeDiv);
+if ($tree) renderTree(tree, $tree);
 
 // 1.2 find all paths through the tree
 const paths = findPaths(tree);
@@ -55,7 +56,7 @@ paths.forEach((p, i) => {
     playSequence(p, 0.15, 0.3);
   });
   button.innerHTML = `Branch ${i + 1}`;
-  controls?.append(button);
+  $controls?.append(button);
 });
 
 // 1.4 create a button to play each path reversed
@@ -65,7 +66,7 @@ paths.forEach((p, i) => {
     playSequence(p.toReversed(), 0.15, 0.3);
   });
   button.innerHTML = `Reverse Branch ${i + 1}`;
-  controls?.append(button);
+  $controls?.append(button);
 });
 
 // 1.6 create a button to loop through the top-down paths
@@ -85,7 +86,7 @@ toggle1.addEventListener("click", () => {
 });
 toggle1.innerHTML = "Turn On";
 
-controls?.append(toggle1);
+$controls?.append(toggle1);
 
 // 1.7 create a button to loop through the bottom-up paths
 const [startLoop2, stopLoop2] = createLooper(paths.map((p) => p.toReversed()));
@@ -104,7 +105,7 @@ toggle2.addEventListener("click", () => {
 });
 toggle2.innerHTML = "Turn On";
 
-controls?.append(toggle2);
+$controls?.append(toggle2);
 
 // 1.8 create a button to loop through all paths
 const allPaths = [...paths, ...paths.map((p) => p.toReversed())];
@@ -126,4 +127,4 @@ toggle3.addEventListener("click", () => {
 });
 toggle3.innerHTML = "Turn On";
 
-controls?.append(toggle3);
+$controls?.append(toggle3);

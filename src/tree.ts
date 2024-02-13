@@ -46,10 +46,13 @@ export const treeFromArray = (
   comp = (a: Note, b: Note) => (a > b ? 1 : -1)
 ): Tree => {
   const sorted = ns.toSorted(comp);
-  return rTreeFromArray(sorted);
+  return rTreeFromArray(sorted) as Tree;
 };
 
-const rTreeFromArray = (ns: Note[]): Tree => {
+const rTreeFromArray = (ns: Note[]): Tree | undefined => {
+  if (ns.length === 0) {
+    return undefined;
+  }
   const middleIndex = Math.floor(ns.length / 2);
   const node: Tree = {
     data: ns[middleIndex],
@@ -58,10 +61,9 @@ const rTreeFromArray = (ns: Note[]): Tree => {
   const leftSubtree = ns.slice(0, middleIndex);
   const rightSubtree = ns.slice(middleIndex + 1);
 
-  if (ns.length > 1) {
-    node.left = rTreeFromArray(leftSubtree);
-    node.right = rTreeFromArray(rightSubtree);
-  }
+  node.left = rTreeFromArray(leftSubtree);
+  node.right = rTreeFromArray(rightSubtree);
+
   return node;
 };
 
