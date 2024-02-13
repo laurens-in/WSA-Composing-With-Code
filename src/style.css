@@ -42,14 +42,37 @@ svg text {
 #tree {
   margin-top: 15px;
   margin-bottom: 15px;
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+}
+
+#controls {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  max-width: 90%;
+  margin: auto;
 }
 
 button {
+  background-color: rgb(36, 32, 32);
+  border: 2px solid rgb(209, 139, 10);
+  border-radius: 7px;
+  width: fit-content;
+  height: 35px;
+  color: rgb(209, 139, 10);
+}
+
+button:hover {
   background-color: rgb(209, 139, 10);
-  border: none;
+  border: 2px solid rgb(209, 139, 10);
   border-radius: 7px;
   width: fit-content;
   height: 35px;
   color: rgb(36, 32, 32);
-  margin-right: 4px;
+}
+
+button:active {
+  transform: scale(0.95);
 }

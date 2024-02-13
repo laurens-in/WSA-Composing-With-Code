@@ -1,18 +1,20 @@
-export type Tree<T> = {
-  data: T;
-  left?: Tree<T>;
-  right?: Tree<T>;
+export type Note = number;
+
+export type Tree = {
+  data: number;
+  left?: Tree;
+  right?: Tree;
 };
 
-export const isNode = <T>(t: Tree<T>) => {
+export const isNode = (t: Tree) => {
   return t.left !== undefined || t.right !== undefined;
 };
 
-export const isLeaf = <T>(t: Tree<T>) => {
+export const isLeaf = (t: Tree) => {
   return t.left === undefined && t.right === undefined;
 };
 
-export const insertNode = <T>(root: Tree<T> | undefined, data: T): Tree<T> => {
+export const insertNode = (root: Tree | undefined, data: number): Tree => {
   if (!root) {
     return { data, left: undefined, right: undefined };
   }
@@ -26,18 +28,44 @@ export const insertNode = <T>(root: Tree<T> | undefined, data: T): Tree<T> => {
   return root;
 };
 
-export function balanceTree<T>(root: Tree<T>): Tree<T> {
-  function height(node: Tree<T> | undefined): number {
+export const treeFromArray = (ns: number[]): Tree => {
+  const sorted = ns.toSorted((a, b) => (a > b ? 1 : -1));
+  console.log(sorted);
+  return rTreeFromArray(sorted) as Tree;
+};
+
+const rTreeFromArray = (ns: number[]): Tree | undefined => {
+  console.log(ns);
+  if (ns.length === 0) {
+    return undefined;
+  }
+
+  const middleIndex = Math.floor(ns.length / 2);
+  const node: Tree = {
+    data: ns[middleIndex],
+  };
+
+  const leftSubtree = ns.slice(0, middleIndex);
+  const rightSubtree = ns.slice(middleIndex + 1);
+
+  node.left = rTreeFromArray(leftSubtree);
+  node.right = rTreeFromArray(rightSubtree);
+
+  return node;
+};
+
+export function balanceTree(root: Tree): Tree {
+  function height(node: Tree | undefined): number {
     if (!node) return 0;
     return 1 + Math.max(height(node.left), height(node.right));
   }
 
-  function balanceFactor(node: Tree<T> | undefined): number {
+  function balanceFactor(node: Tree | undefined): number {
     if (!node) return 0;
     return height(node.left) - height(node.right);
   }
 
-  function rotateRight(y: Tree<T>): Tree<T> {
+  function rotateRight(y: Tree): Tree {
     const x = y.left!;
     const temp = x.right;
     x.right = y;
@@ -45,7 +73,7 @@ export function balanceTree<T>(root: Tree<T>): Tree<T> {
     return x;
   }
 
-  function rotateLeft(x: Tree<T>): Tree<T> {
+  function rotateLeft(x: Tree): Tree {
     const y = x.right!;
     const temp = y.left;
     y.left = x;
@@ -53,17 +81,17 @@ export function balanceTree<T>(root: Tree<T>): Tree<T> {
     return y;
   }
 
-  function balance(node: Tree<T>): Tree<T> {
+  function balance(node: Tree): Tree {
     const factor = balanceFactor(node);
 
-    // Left Heavy
+    // left heavy
     if (factor > 1) {
       if (balanceFactor(node.left) < 0) {
         node.left = rotateLeft(node.left!);
       }
       return rotateRight(node);
     }
-    // Right Heavy
+    // right heavy
     if (factor < -1) {
       if (balanceFactor(node.right) > 0) {
         node.right = rotateRight(node.right!);
@@ -76,7 +104,7 @@ export function balanceTree<T>(root: Tree<T>): Tree<T> {
   return balance(root);
 }
 
-export const findPaths = <T>(node: Tree<T>, path: T[] = []): T[][] => {
+export const findPaths = (node: Tree, path: T[] = []): T[][] => {
   if (!node) return [];
 
   if (isLeaf(node)) {
@@ -96,80 +124,54 @@ export const findPaths = <T>(node: Tree<T>, path: T[] = []): T[][] => {
   return [];
 };
 
-type IdTree<T> = Tree<T> & { id: string };
-
-const idTree = <T>(tree: Tree<T>, pos = ""): IdTree<T> => {
-  if (isLeaf(tree)) {
-    return { ...tree, id: pos };
-  }
-
-  if (isNode(tree)) {
-    const leftPaths = tree.left
-      ? idTree(tree.left, pos + "L")
-      : { id: pos, data: tree.data };
-    const rightPaths = tree.right
-      ? idTree(tree.right, pos + "R")
-      : { id: pos, data: tree.data };
-    return { ...leftPaths, ...rightPaths };
-  }
-};
-
-function getBorder<T>(root: Tree<T>): T[] {
+export const getBorder = (root: Tree): T[] => {
   const leftBoundary = isNode(root) ? getLeftBoundary(root.left) : [];
   const leaves = getLeaves(root);
   const rightBoundary = isNode(root) ? getRightBoundary(root.right) : [];
 
   return [root.data, ...leftBoundary, ...leaves, ...rightBoundary];
-}
+};
 
-function getLeftBoundary<T>(node: Tree<T> | undefined): T[] {
-  if (!node) return [];
-  if (isLeaf(node)) return [];
+const getLeftBoundary = (node: Tree | undefined): number[] => {
+  if (!node || isLeaf(node)) return [];
 
   const leftBoundary = [node.data];
-  if (node.left) {
-    leftBoundary.push(...getLeftBoundary(node.left));
-  } else if (node.right) {
-    leftBoundary.push(...getLeftBoundary(node.right));
-  }
+  const nextNode = node.left || node.right;
+  return [...leftBoundary, ...getLeftBoundary(nextNode)];
+};
 
-  return leftBoundary;
-}
-
-function getRightBoundary<T>(node: Tree<T> | undefined): T[] {
-  if (!node) return [];
-  if (isLeaf(node)) return [];
+const getRightBoundary = (node: Tree | undefined): number[] => {
+  if (!node || isLeaf(node)) return [];
 
   const rightBoundary = [node.data];
-  if (node.right) {
-    rightBoundary.push(...getRightBoundary(node.right));
-  } else if (node.left) {
-    rightBoundary.push(...getRightBoundary(node.left));
-  }
+  const nextNode = node.right || node.left;
+  return [...rightBoundary, ...getRightBoundary(nextNode)].reverse();
+};
 
-  return rightBoundary.reverse();
-}
-
-function getLeaves<T>(node: Tree<T> | undefined): T[] {
+const getLeaves = (node: Tree | undefined): number[] => {
   if (!node) return [];
   if (isLeaf(node)) return [node.data];
 
   return [...getLeaves(node.left), ...getLeaves(node.right)];
-}
+};
 
-type UndirectedGraph<T> = Map<T, T[]>;
+// convert tree to undirected graph
+type UndirectedGraph = Map<number, number[]>;
 
-function treeToUndirectedGraph<T>(root: Tree<T>): UndirectedGraph<T> {
-  const graph: UndirectedGraph<T> = new Map();
+export const treeToUndirectedGraph = (root: Tree): UndirectedGraph => {
+  const graph: UndirectedGraph = new Map();
 
-  function addEdge(from: T, to: T) {
+  const addEdge = (from: number, to: number) => {
     if (!graph.has(from)) {
       graph.set(from, []);
     }
     graph.get(from)?.push(to);
-  }
+  };
 
-  function dfs(node: Tree<T> | undefined, parent: T | undefined = undefined) {
+  const dfs = (
+    node: Tree | undefined,
+    parent: number | undefined = undefined
+  ) => {
     if (!node) return;
     if (parent !== undefined) {
       addEdge(parent, node.data); // Edge from parent to child
@@ -179,12 +181,9 @@ function treeToUndirectedGraph<T>(root: Tree<T>): UndirectedGraph<T> {
       dfs(node.left, node.data);
       dfs(node.right, node.data);
     }
-  }
+  };
 
   dfs(root);
 
   return graph;
-}
-
-export const getRandomItem = <T>(items: T[]) =>
-  items[Math.floor(Math.random() * items.length)];
+};

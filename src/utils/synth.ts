@@ -45,6 +45,20 @@ export const playSequence = (
   }, (speed - duration) * 1000);
 };
 
+export const playSequenceWeighted = (
+  ns: number[],
+  duration = 0.3,
+  speed = 1,
+  count = 0
+) => {
+  if (count === ns.length) return;
+  playNote(ns[count], duration);
+  eventBus.emit("played", ns[count].toString()); // just to see which note is playing
+  setTimeout(() => {
+    playSequenceWeighted(ns, duration, speed, count + 1);
+  }, ((speed - duration) * 1000) / ((count + 1) * 0.25));
+};
+
 export const playSequenceAsync = (
   ns: number[],
   duration = 0.3,
@@ -61,6 +75,7 @@ export const playSequenceAsync = (
       eventBus.emit("played", ns[index].toString());
       setTimeout(() => {
         playNextNote(index + 1);
+        // }, ((speed - duration) * 1000) / ((index + 1) * 0.25));
       }, (speed - duration) * 1000);
     };
     playNextNote(count);
@@ -83,7 +98,7 @@ export const createLooper = (ns: number[][]) => {
     const playNextSequence = () => {
       if (!play) return;
       const currentSequence = ns[Math.floor(Math.random() * ns.length)];
-      playSequenceAsync(currentSequence, 0.2, 0.4).then(() => {
+      playSequenceAsync(currentSequence, 0.15, 0.25).then(() => {
         playNextSequence();
       });
     };

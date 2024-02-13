@@ -1,14 +1,13 @@
-// import { visualize } from "./cytoscape";
-import { renderTree } from "./utils/draw";
-import { nodeCallback } from "./utils/pubsub";
 import "./style.css";
+import { renderTree } from "./utils/draw";
 import { createLooper, playSequence } from "./utils/synth";
-import { Tree, balanceTree, findPaths, insertNode } from "./tree";
+import { Tree, findPaths, treeFromArray } from "./tree";
 
-const app = document.querySelector<HTMLDivElement>("#app");
+const controls = document.querySelector<HTMLDivElement>("#controls");
 const treeDiv = document.querySelector<HTMLDivElement>("#tree");
 
-let tree: Tree<number> = {
+// 1.0 create any tree as a literal
+let tree: Tree = {
   data: 60,
   left: {
     data: 63,
@@ -38,40 +37,38 @@ let tree: Tree<number> = {
   },
 };
 
-// let tree: Tree<number> = { data: 60 };
+// create a binary search tree from an array!
+tree = treeFromArray([
+  60, 62, 63, 65, 67, 68, 70, 72, 74, 75, 77, 79, 80, 82, 84,
+]);
 
-// tree = insertNode(tree, 51);
-// tree = insertNode(tree, 63);
-// tree = insertNode(tree, 48);
-// tree = insertNode(tree, 47);
-// tree = insertNode(tree, 53);
-// tree = insertNode(tree, 54);
-// tree = insertNode(tree, 55);
-// tree = insertNode(tree, 52);
-// tree = balanceTree(tree);
+// 1.1 render the tree
+if (treeDiv) renderTree(tree, treeDiv);
 
-if (treeDiv) renderTree(tree, treeDiv, nodeCallback);
-
+// 1.2 find all paths through the tree
 const paths = findPaths(tree);
 
+// 1.3 create a button to play each path
 paths.forEach((p, i) => {
   const button = document.createElement("button");
   button.addEventListener("click", () => {
     playSequence(p, 0.15, 0.3);
   });
   button.innerHTML = `Branch ${i + 1}`;
-  app?.append(button);
+  controls?.append(button);
 });
 
+// 1.4 create a button to play each path reversed
 paths.forEach((p, i) => {
   const button = document.createElement("button");
   button.addEventListener("click", () => {
     playSequence(p.toReversed(), 0.15, 0.3);
   });
   button.innerHTML = `Reverse Branch ${i + 1}`;
-  app?.append(button);
+  controls?.append(button);
 });
 
+// 1.4 create a button to loop through the top-down paths
 const [startLoop1, stopLoop1] = createLooper(paths);
 const toggle1 = document.createElement("button");
 let toggle1State = false;
@@ -88,8 +85,9 @@ toggle1.addEventListener("click", () => {
 });
 toggle1.innerHTML = "Turn On";
 
-app?.append(toggle1);
+controls?.append(toggle1);
 
+// 1.5 create a button to loop through the bottom-up paths
 const [startLoop2, stopLoop2] = createLooper(paths.map((p) => p.toReversed()));
 const toggle2 = document.createElement("button");
 let toggle2State = false;
@@ -106,8 +104,9 @@ toggle2.addEventListener("click", () => {
 });
 toggle2.innerHTML = "Turn On";
 
-app?.append(toggle2);
+controls?.append(toggle2);
 
+// 1.6 create a button to loop through all paths
 const allPaths = [...paths, ...paths.map((p) => p.toReversed())];
 
 const [startLoop3, stopLoop3] = createLooper(allPaths);
@@ -127,4 +126,4 @@ toggle3.addEventListener("click", () => {
 });
 toggle3.innerHTML = "Turn On";
 
-app?.append(toggle3);
+controls?.append(toggle3);

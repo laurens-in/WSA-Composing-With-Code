@@ -1,11 +1,8 @@
 import { playNote } from "./synth";
 import { Tree, findPaths, isLeaf, isNode } from "../tree";
+import { nodeCallback } from "./pubsub";
 
-export const renderTree = <T>(
-  t: Tree<T>,
-  container: HTMLDivElement,
-  nodeCallback: (nodeId: string, g: SVGElement) => void
-) => {
+export const renderTree = <T>(t: Tree<T>, container: HTMLDivElement) => {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
   const obs = new ResizeObserver(() => {
