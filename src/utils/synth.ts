@@ -1,5 +1,6 @@
 import { eventBus } from "./pubsub";
 import { midiToFreq } from "./conversions";
+import { UndirectedGraph } from "../tree";
 
 const ctx = new AudioContext();
 
@@ -108,6 +109,29 @@ export const createLooper = (ns: number[][]) => {
     () => {
       play = true;
       loopSequences(ns);
+    },
+    () => {
+      play = false;
+    },
+  ];
+};
+
+export const createLooperGraph = (g: UndirectedGraph) => {
+  console.log("i go");
+  let play = true;
+  const startingPoint = parseInt(Object.keys(g)[0]);
+  const walkGraph = (node: number) => {
+    const notes = g[node];
+    const nextNote = notes[Math.floor(Math.random() * notes.length)];
+    playNote(nextNote, 0.3);
+    eventBus.emit("played", nextNote.toString()); // just to see which note is playing
+    if (!play) return;
+    setTimeout(() => walkGraph(nextNote), 300);
+  };
+  return [
+    () => {
+      play = true;
+      walkGraph(startingPoint);
     },
     () => {
       play = false;

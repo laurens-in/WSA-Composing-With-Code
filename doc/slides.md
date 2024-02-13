@@ -299,6 +299,12 @@ A binary search tree has a few characteristics:
 
 ### Data Structure: Binary Search Tree
 
+![](https://simplesnippets.tech/wp-content/uploads/2020/10/binary-tree-vs-binary-search-tree-diagram.png)
+
+---
+
+### Data Structure: Binary Search Tree
+
 They can be complicated if they have to be kept updated, however we only initialize them once, so we can use a little trick.
 
 ---
@@ -309,4 +315,12 @@ Let's try it out!
 
 ### Conclusion
 
-- This was just an experiment, to get you thinking
+- This example was on a very abstract micro level
+- It is up to you to create more interesting stuff ;)
+- We can use _data structures_ and _algorithms_ to compose music, which can shape our composition
+
+---
+
+If you come across any kind of computer science concept, ask yourself:
+
+_How can I make music with this?_
